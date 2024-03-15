@@ -18,44 +18,74 @@ using namespace std;
 
 %option noyywrap
 
-ws		[ \t\r]+
-comment		"//".*\n
-line		[\n]
-id		[A-Za-z]([A-Za-z0-9])*
-digit		[0-9]
+ws  [ \t\r]+
+comment	    "//".*\n
+dComment    "--".*\n
+line	[\n]
+id		[A-Za-z]([A-Za-z_]*[A-Za-z0-9])?
+digit	[0-9]
 dec		{digit}+
-char		'.'
-punc		[\(\),:;]
-%%
+hex 	#[0-9A-Fa-f]+
+real	{digit}+\.{digit}+([eE][+-]?{digit}+)?
+char    '\\b'|'\\t'|'\\n'|'\\f'|'[^']'
+punc    [\(\),:;]
 
-{ws}		{ ECHO; }
-{comment}	{ ECHO; nextLine(); }
-{line}		{ ECHO; nextLine(); }
-"+"		{ ECHO; return(ADDOP); }
-"*"		{ ECHO; return(MULOP); }
-"&"		{ ECHO; return(ANDOP); }
-"<"		{ ECHO; return(RELOP); }
-"=>"		{ ECHO; return(ARROW); }
+%%
+{real}		{ ECHO; return(REAL); }
+else		{ ECHO; return(ELSE); }
+elsif		{ ECHO; return(ELSIF); }
+endfold		{ ECHO; return(ENDFOLD); }
+fold		{ ECHO; return(FOLD); }
+if 			{ ECHO; return(IF); }
+left		{ ECHO; return(LEFT); }
+right		{ ECHO; return(RIGHT); }
+then 		{ ECHO; return(THEN); }
 begin		{ ECHO; return(BEGIN_); }
 case		{ ECHO; return(CASE); }
 character	{ ECHO; return(CHARACTER); }
 end		{ ECHO; return(END); }
 endswitch	{ ECHO; return(ENDSWITCH); }
 function	{ ECHO; return(FUNCTION); }
-integer		{ ECHO; return(INTEGER); }
 is		{ ECHO; return(IS); }
 list		{ ECHO; return(LIST); }
 of		{ ECHO; return(OF); }
 others		{ ECHO; return(OTHERS); }
 returns		{ ECHO; return(RETURNS); }
 switch		{ ECHO; return(SWITCH); }
+integer		{ ECHO; return(INTEGER); }
 when		{ ECHO; return(WHEN); }
-
-{id}		{ ECHO; return(IDENTIFIER);}
-{dec}		{ ECHO; return(INT_LITERAL); }
 {char}		{ ECHO; return(CHAR_LITERAL); }
+{id}		{ if(strstr(yytext, "___") == NULL){
+    ECHO;
+    return(IDENTIFIER);
+    }; }
+"|"			{ ECHO; return(OROP); }
+"!"			{ ECHO;return(NOTOP); }
+"="			{ ECHO;return(RELOP); }
+"<>"	    { ECHO; return(RELOP); }
+">"			{ ECHO;return(RELOP); }
+">="		{ ECHO;return(RELOP); }
+"<="		{ ECHO; return(RELOP); }
+"-"			{ ECHO;return(ADDOP); }
+"/"			{ ECHO;return(MULOP); }
+"%"			{ ECHO;return(REMOP); }
+"^"			{ ECHO;return(EXPOP); }
+"~"			{ ECHO;return(NEGOP); }
+"+"		{ ECHO; return(ADDOP); }
+"*"		{ ECHO; return(MULOP); }
+"&"		{ ECHO; return(ANDOP); }
+"<"		{ ECHO; return(RELOP); }
+"=>"		{ ECHO; return(ARROW); }
+{dec}		{ ECHO; return(INT_LITERAL); }
+{ws}		{ ECHO; }
+{comment}	{ ECHO; nextLine(); }
+{dComment}	{ ECHO; nextLine(); }
+{line}		{ ECHO; nextLine(); }
+
 {punc}		{ ECHO; return(yytext[0]); }
+{hex}		{ ECHO; return(INT_LITERAL); }
 .		{ ECHO; appendError(LEXICAL, yytext); }
+
 %%
 
 int main() {

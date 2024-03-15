@@ -8,14 +8,19 @@
 
 #include <cstdio>
 #include <string>
+#include <vector>
+#include <map>
 
 using namespace std;
 
 #include "listing.h"
 
-static int lineNumber;
+
 static string error = "";
 static int totalErrors = 0;
+static int lineNumber;
+static map<ErrorCategories, int> errorCounts; // Tracks counts of different error types
+static vector<string> lineErrors; // Stores error messages for the current line
 
 static void displayErrors();
 
@@ -32,13 +37,21 @@ void nextLine()
 	printf("%4d  ",lineNumber);//
 }
 
-int lastLine()
-{//called in scanner.l.main after repeated calls to yylex
-	printf("\r");//
-	displayErrors();//
-	printf("     \n");//removes the line number that the last call to nexLine() created
-	return totalErrors;
+int lastLine() {
+    displayErrors(); // Ensure remaining errors are displayed before the summary
+
+    if (totalErrors > 0) {
+        printf("Lexical Errors %d\n", errorCounts[LEXICAL]);
+        printf("Syntax Errors %d\n", errorCounts[SYNTAX]);
+        printf("Semantic Errors %d\n", errorCounts[GENERAL_SEMANTIC] + errorCounts[DUPLICATE_IDENTIFIER] + errorCounts[UNDECLARED]);
+    } else {
+        printf("Compiled Successfully\n");
+    }
+    
+    return totalErrors;
 }
+
+
     
 void appendError(ErrorCategories errorCategory, string message)
 {//called when lexical errors occur, also used for all future compilation errors\
@@ -49,11 +62,14 @@ void appendError(ErrorCategories errorCategory, string message)
 
 	error = messages[errorCategory] + message;
 	totalErrors++;
+	lineErrors.push_back(messages[errorCategory] + message); // Add to line errors
+    errorCounts[errorCategory]++; // Increment error count
 }
 
-void displayErrors()
-{//called at the end of each line to display any errors that may have occurred
-	if (error != "")
-		printf("%s\n", error.c_str());
-	error = "";
+void displayErrors() {
+    for (const string& msg : lineErrors) {
+        printf("%s\n", msg.c_str());
+    }
+    lineErrors.clear(); // Clear errors for the next line
 }
+

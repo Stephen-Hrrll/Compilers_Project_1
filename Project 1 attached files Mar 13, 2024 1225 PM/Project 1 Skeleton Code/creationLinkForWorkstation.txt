@@ -1,9 +1,0 @@
-https://console.cloud.google.com/workstations/create?withConfig=projects%2Fcompilerclass%2Flocations%2Fus-east4%2FworkstationClusters%2Ftest-compiler-cluster%2FworkstationConfigs%2Fcompiler-test-config
-
-
-
-project name: CompilerClass
-ID: compilerclass
-Region: US east 4 northern VA
-cluster name: test-compiler-cluster
-configuration name: compiler-test-config
