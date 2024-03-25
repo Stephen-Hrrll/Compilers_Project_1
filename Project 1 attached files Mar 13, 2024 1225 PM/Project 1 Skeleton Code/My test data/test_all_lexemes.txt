@@ -1,0 +1,35 @@
+// Test case containing all lexemes 
+function main returns integer;
+begin 
+    -- Reserved words
+    if x > 0 then
+        y is fold left + (1, 2, 3) endfold; 
+    elsif x < 0 then 
+        y is fold right * (4, 5, 6) endfold;
+    else 
+        switch x is 
+            case 0 => y + 0;
+            others => y + 1;
+        endswitch; 
+    endif;
+
+    -- Operators 
+    result is (a + b) * (c - d) / e % f ^ g;
+    flag is (p & q) | (r & !s);
+
+    -- Literals 
+    int1 is 42;
+    int2 is #FF0A;
+    real1 is 3.14159;
+    real2 is 2.5e-3;
+    char1 is 'A';
+    char2 is '\n';
+    -- Identifiers 
+
+    variable_name is 5;
+    another_var_2 is 10;
+end;
+
+
+//should compile successfully
+

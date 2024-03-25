@@ -22,11 +22,25 @@ ws  [ \t\r]+
 comment	    "//".*\n
 dComment    "--".*\n
 line	[\n]
-id		[A-Za-z]([A-Za-z_]*[A-Za-z0-9])?
+
+/*
+	identifier must start with an uppercase or lowercase letter
+	it can be followed by zero or more occurrences of:
+	an alphanumeric character ([A-Za-z0-9]), or
+	an underscore followed by an alphanumeric character (_[A-Za-z0-9]), or
+	two underscores followed by an alphanumeric character (__[A-Za-z0-9]).
+*/
+id		[A-Za-z]([A-Za-z0-9]|_[A-Za-z0-9]|__[A-Za-z0-9])*
 digit	[0-9]
 dec		{digit}+
 hex 	#[0-9A-Fa-f]+
-real	{digit}+\.{digit}+([eE][+-]?{digit}+)?
+
+/*
+   {digit}* = zero or more leading digits
+  {digit}+ = 1 or more digits after decimal point
+  ([eE][+-]?{digit}+)? = an optional exponent
+*/
+real	({digit}*\.{digit}+([eE][+-]?{digit}+)?)
 char    '\\b'|'\\t'|'\\n'|'\\f'|'[^']'
 punc    [\(\),:;]
 
@@ -43,38 +57,36 @@ then 		{ ECHO; return(THEN); }
 begin		{ ECHO; return(BEGIN_); }
 case		{ ECHO; return(CASE); }
 character	{ ECHO; return(CHARACTER); }
-end		{ ECHO; return(END); }
+end			{ ECHO; return(END); }
 endswitch	{ ECHO; return(ENDSWITCH); }
 function	{ ECHO; return(FUNCTION); }
-is		{ ECHO; return(IS); }
+is			{ ECHO; return(IS); }
 list		{ ECHO; return(LIST); }
-of		{ ECHO; return(OF); }
+of			{ ECHO; return(OF); }
 others		{ ECHO; return(OTHERS); }
 returns		{ ECHO; return(RETURNS); }
 switch		{ ECHO; return(SWITCH); }
 integer		{ ECHO; return(INTEGER); }
 when		{ ECHO; return(WHEN); }
 {char}		{ ECHO; return(CHAR_LITERAL); }
-{id}		{ if(strstr(yytext, "___") == NULL){
-    ECHO;
-    return(IDENTIFIER);
-    }; }
+
+{id}		{ ECHO; return(IDENTIFIER);}
 "|"			{ ECHO; return(OROP); }
-"!"			{ ECHO;return(NOTOP); }
-"="			{ ECHO;return(RELOP); }
+"!"			{ ECHO; return(NOTOP); }
+"="			{ ECHO; return(RELOP); }
 "<>"	    { ECHO; return(RELOP); }
-">"			{ ECHO;return(RELOP); }
-">="		{ ECHO;return(RELOP); }
+">"			{ ECHO; return(RELOP); }
+">="		{ ECHO; return(RELOP); }
 "<="		{ ECHO; return(RELOP); }
-"-"			{ ECHO;return(ADDOP); }
-"/"			{ ECHO;return(MULOP); }
-"%"			{ ECHO;return(REMOP); }
-"^"			{ ECHO;return(EXPOP); }
-"~"			{ ECHO;return(NEGOP); }
-"+"		{ ECHO; return(ADDOP); }
-"*"		{ ECHO; return(MULOP); }
-"&"		{ ECHO; return(ANDOP); }
-"<"		{ ECHO; return(RELOP); }
+"-"			{ ECHO; return(ADDOP); }
+"/"			{ ECHO; return(MULOP); }
+"%"			{ ECHO; return(REMOP); }
+"^"			{ ECHO; return(EXPOP); }
+"~"			{ ECHO; return(NEGOP); }
+"+"			{ ECHO; return(ADDOP); }
+"*"			{ ECHO; return(MULOP); }
+"&"			{ ECHO; return(ANDOP); }
+"<"			{ ECHO; return(RELOP); }
 "=>"		{ ECHO; return(ARROW); }
 {dec}		{ ECHO; return(INT_LITERAL); }
 {ws}		{ ECHO; }
@@ -84,7 +96,7 @@ when		{ ECHO; return(WHEN); }
 
 {punc}		{ ECHO; return(yytext[0]); }
 {hex}		{ ECHO; return(INT_LITERAL); }
-.		{ ECHO; appendError(LEXICAL, yytext); }
+.			{ ECHO; appendError(LEXICAL, yytext); }
 
 %%
 

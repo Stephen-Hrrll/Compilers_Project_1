@@ -1,0 +1,18 @@
+// Test case with no errors
+
+function factorial(n: integer) returns integer;
+begin
+    if n <= 1 then
+        return 1;
+    else
+        return n * factorial(n - 1);
+    endif;
+end;
+
+function main returns integer;
+begin
+    result is factorial(5);
+    return result;
+end;
+
+

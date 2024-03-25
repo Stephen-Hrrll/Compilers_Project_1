@@ -1,0 +1,10 @@
+// Test case for invalid identifiers 
+
+function main returns integer; 
+begin 
+    name___3 is 5; 
+    name_3 is 10; 
+    name4_ is 15; 
+end;
+
+

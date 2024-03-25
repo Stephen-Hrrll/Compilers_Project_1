@@ -1,0 +1,6 @@
+// Test case with multiple errors on one line
+
+function main returns integer;
+begin
+x is y + @z * #;
+end;

@@ -1,0 +1,13 @@
+// Test case for hexadecimal integers and real literals 
+function main returns integer;
+begin
+    hex1 is #3A;
+    hex2 is #fF09;
+    real1 is 3.14;
+    real2 is .001;
+    real3 is 2.5e-3;
+end;
+
+
+
+// Expected output: Compiled Successfully 
